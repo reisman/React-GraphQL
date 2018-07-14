@@ -14,7 +14,24 @@ func init() {
 	var authorType *graphql.Object
 	var messageType *graphql.Object
 
-	nodeDefinitions := relay.NewNodeDefinitions(relay.NodeDefinitionsConfig{
+	nodeDefinitions := createNodeDefinitions(authorType, messageType)
+	authorType = createAuthorType(nodeDefinitions)
+	messageType = createMessageType(nodeDefinitions, authorType)
+	queryType := createQuery(nodeDefinitions, authorType, messageType)
+
+	schema, err := graphql.NewSchema(graphql.SchemaConfig{
+		Query: queryType,
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	Schema = &schema
+}
+
+func createNodeDefinitions(authorType *graphql.Object, messageType *graphql.Object) *relay.NodeDefinitions {
+	return relay.NewNodeDefinitions(relay.NodeDefinitionsConfig{
 		IDFetcher: func(id string, info graphql.ResolveInfo, ctx context.Context) (interface{}, error) {
 			resolvedID := relay.FromGlobalID(id)
 			switch resolvedID.Type {
@@ -35,46 +52,10 @@ func init() {
 			}
 		},
 	})
+}
 
-	authorType = graphql.NewObject(graphql.ObjectConfig{
-		Name:        "Author",
-		Description: "The author of a published message",
-		Fields: graphql.Fields{
-			"id": relay.GlobalIDField("Author", nil),
-			"name": &graphql.Field{
-				Type:        graphql.String,
-				Description: "The name of the author",
-			},
-		},
-		Interfaces: []*graphql.Interface{
-			nodeDefinitions.NodeInterface,
-		},
-	})
-
-	messageType = graphql.NewObject(graphql.ObjectConfig{
-		Name:        "Message",
-		Description: "A message that was published by an author",
-		Fields: graphql.Fields{
-			"id": relay.GlobalIDField("Message", nil),
-			"text": &graphql.Field{
-				Type:        graphql.String,
-				Description: "The content of the message",
-			},
-			"publishedat": &graphql.Field{
-				Type:        graphql.DateTime,
-				Description: "The time when the message was published",
-			},
-			"author": &graphql.Field{
-				Type:        authorType,
-				Description: "The author of this message",
-			},
-		},
-		Interfaces: []*graphql.Interface{
-			nodeDefinitions.NodeInterface,
-		},
-	})
-
-	queryType := graphql.NewObject(graphql.ObjectConfig{
+func createQuery(nodeDefinitions *relay.NodeDefinitions, authorType *graphql.Object, messageType *graphql.Object) *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
 		Name: "Query",
 		Fields: graphql.Fields{
 			"authors": &graphql.Field{
@@ -92,14 +73,4 @@ func init() {
 			"node": nodeDefinitions.NodeField,
 		},
 	})
-
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: queryType,
-	})
-
-	if err != nil {
-		panic(err)
-	}
-
-	Schema = &schema
 }

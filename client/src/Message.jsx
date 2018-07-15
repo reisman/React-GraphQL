@@ -7,7 +7,7 @@ const Message = ({text, publishedat, author }) => {
         <div>
             <Card>
                 <CardBody>
-                    <CardTitle>Message from {author} ({moment(publishedat).format('LLL')})</CardTitle>
+                    <CardTitle>Message from {author} ({moment(publishedat).format('LTS')})</CardTitle>
                     <CardText>{text}</CardText>
                 </CardBody>
             </Card>

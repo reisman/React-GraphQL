@@ -1,5 +1,5 @@
 import React from 'react';
-import { graphql, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import User from './User';
@@ -13,7 +13,7 @@ const GET_USERS = gql`
 }
 `
 
-const Users = (props) => {
+const Users = () => {
     return (
         <Query query={GET_USERS} pollInterval={1000}>
             {({ loading, error, data }) => {

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import { Container, Row, Col, Fluid } from 'reactstrap';
-import { ToastContainer } from 'react-toastify';
+import { Container, Row, Col } from 'reactstrap';
 
 import Messages from './Messages';
 import Users from './Users';

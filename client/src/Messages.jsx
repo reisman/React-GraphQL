@@ -2,11 +2,17 @@ import React, { Component } from 'react';
 import { graphql, Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import Message from './Message';
+
 const GET_MESSAGES = gql`
 {
     messages {
         id,
-        text
+        text,
+        publishedat,
+        author {
+            name
+        }
     }
 }
 `
@@ -19,9 +25,7 @@ const Messages = () => {
                 if (error) return `ERROR: ${error.message}`;
                 return data.messages.map(msg => {
                     return (
-                        <div key={msg.id}>
-                            <p>{msg.text}</p>
-                        </div>
+                        <Message key={msg.id} text={msg.text} publishedat={msg.publishedat} author={msg.author.name} />
                     );
                 });
             }}

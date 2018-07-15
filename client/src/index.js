@@ -6,6 +6,7 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import App from './App';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const address = 'http://localhost:8080/graphql';
 const client = new ApolloClient({

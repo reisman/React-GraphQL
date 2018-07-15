@@ -1,5 +1,9 @@
 package data
 
+import (
+	"sort"
+)
+
 var hans = &Author{ID: "1", Name: "Hans"}
 var peter = &Author{ID: "2", Name: "Peter"}
 var sam = &Author{ID: "3", Name: "Sam"}
@@ -26,9 +30,23 @@ func getAuthors() []*Author {
 	for _, author := range authors {
 		values = append(values, author)
 	}
+
+	sort.Sort(sortByName(values))
 	return values
 }
 
 func addAuthor(author *Author) {
 	authors[author.ID] = author
+}
+
+type sortByName []*Author
+
+func (s sortByName) Len() int {
+	return len(s)
+}
+func (s sortByName) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s sortByName) Less(i, j int) bool {
+	return s[i].Name < s[j].Name
 }

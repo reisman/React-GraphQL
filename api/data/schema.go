@@ -93,7 +93,8 @@ func createMutation(authorType *graphql.Object, messageType *graphql.Object) *gr
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					text, _ := p.Args["text"].(string)
-					authorID, _ := p.Args["authorId"].(string)
+					globAuthorID, _ := p.Args["authorId"].(string)
+					authorID := relay.FromGlobalID(globAuthorID).ID
 					author := getAuthor(authorID)
 					msg := createMessage(text, author)
 					addMessage(msg)

@@ -28,3 +28,7 @@ func getAuthors() []*Author {
 	}
 	return values
 }
+
+func addAuthor(author *Author) {
+	authors[author.ID] = author
+}

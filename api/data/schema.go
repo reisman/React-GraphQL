@@ -18,9 +18,11 @@ func init() {
 	authorType = createAuthorType(nodeDefinitions)
 	messageType = createMessageType(nodeDefinitions, authorType)
 	queryType := createQuery(nodeDefinitions, authorType, messageType)
+	mutationType := createMutation(authorType, messageType)
 
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: queryType,
+		Query:    queryType,
+		Mutation: mutationType,
 	})
 
 	if err != nil {
@@ -71,6 +73,47 @@ func createQuery(nodeDefinitions *relay.NodeDefinitions, authorType *graphql.Obj
 				},
 			},
 			"node": nodeDefinitions.NodeField,
+		},
+	})
+}
+
+func createMutation(authorType *graphql.Object, messageType *graphql.Object) *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name: "Mutation",
+		Fields: graphql.Fields{
+			"addMessage": &graphql.Field{
+				Type: messageType,
+				Args: graphql.FieldConfigArgument{
+					"text": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"authorId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					text, _ := p.Args["text"].(string)
+					authorID, _ := p.Args["authorId"].(string)
+					author := getAuthor(authorID)
+					msg := createMessage(text, author)
+					addMessage(msg)
+					return msg, nil
+				},
+			},
+			"addAuthor": &graphql.Field{
+				Type: authorType,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					author := createAuthor(name)
+					addAuthor(author)
+					return author, nil
+				},
+			},
 		},
 	})
 }

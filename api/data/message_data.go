@@ -32,3 +32,7 @@ func getMessages() []*Message {
 	}
 	return values
 }
+
+func addMessage(msg *Message) {
+	messages[msg.ID] = msg
+}

@@ -10,6 +10,13 @@ type Author struct {
 	Name string `json:"name"`
 }
 
+func createAuthor(name string) *Author {
+	return &Author{
+		ID:   generateID(),
+		Name: name,
+	}
+}
+
 func createAuthorType(nodeDefinitions *relay.NodeDefinitions) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name:        "Author",

@@ -14,6 +14,15 @@ type Message struct {
 	Author      *Author   `json:"author"`
 }
 
+func createMessage(text string, author *Author) *Message {
+	return &Message{
+		ID:          generateID(),
+		Author:      author,
+		PublishedAt: time.Now(),
+		Text:        text,
+	}
+}
+
 func createMessageType(nodeDefinitions *relay.NodeDefinitions, authorType *graphql.Object) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name:        "Message",

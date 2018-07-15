@@ -22,11 +22,22 @@ class AddMessage extends Component {
             });
         };
 
-        const handleClick = (txt, e) => {
+        const handleKeyUp = e => {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                postMessage.bind(this)();
+            }
+        };
+
+        const handleClick = (e) => {
             e.preventDefault();
+            postMessage.bind(this)();
+        };
+
+        const postMessage = () => {
             this.state.mutate({
                 variables: {
-                    text: txt,
+                    text: this.state.text,
                     authorId:this.state.user,
                 },
             }).then(_ => {
@@ -41,8 +52,8 @@ class AddMessage extends Component {
             <div>
                 <br />
                 <InputGroup>
-                    <Input value={this.state.text} onChange={handleChange.bind(this)} />
-                    <InputGroupAddon addonType="append"><Button onClick={handleClick.bind(this, this.state.text)}>Send</Button></InputGroupAddon>
+                    <Input value={this.state.text} onChange={handleChange.bind(this)} onKeyUp={handleKeyUp.bind(this)} />
+                    <InputGroupAddon addonType="append"><Button onClick={handleClick.bind(this)}>Send</Button></InputGroupAddon>
                 </InputGroup>
             </div>
         );
